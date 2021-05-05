@@ -34,21 +34,14 @@ const MOODS: {
 
 const CaptionsWithMoodChart: FC<Props> = () => {
   const { finalTranscript, resetTranscript } = useSpeechRecognition();
-  const [chartData, setChartData] = useState<ChartData>([]);
+  const [chartData, setChartData] = useState<ChartData>([
+    { x: 1, y: 4 },
+    { x: 2, y: 2 },
+    { x: 3, y: 5 },
+    { x: 4, y: 6 },
+    { x: 5, y: 3 },
+  ]);
   const [fullTranscript, setFullTranscript] = useState<FullTranscript>([]);
-
-  const getChartData = useCallback(() => {
-    const newChartData = fullTranscript.map(({ tones }, index) => {
-      const { tone_id } = tones?.[0] || {};
-
-      return {
-        x: index + 1,
-        y: MOODS[tone_id || 'neutral'],
-      }
-    });
-
-    setChartData(newChartData);
-  }, [fullTranscript]);
 
   const getTones = useCallback(
     async (text: string) => {
@@ -64,6 +57,16 @@ const CaptionsWithMoodChart: FC<Props> = () => {
             },
           ]
         );
+
+        const { tone_id } = tones?.[0] || {};
+
+        setChartData(chartData => [
+          ...chartData,
+          {
+            x: chartData.length + 1,
+            y: MOODS[tone_id || 'neutral'],
+          }
+        ]);
 
         resetTranscript();
 
@@ -81,13 +84,9 @@ const CaptionsWithMoodChart: FC<Props> = () => {
     }
   }, [finalTranscript, getTones]);
 
-  useEffect(() => {
-    getChartData();
-  }, [getChartData, fullTranscript]);
-
   return (
     <>
-      <h1>Live captions with mood</h1>
+      <h1>Live captions with mood chart</h1>
 
       <button
         onClick={() =>
