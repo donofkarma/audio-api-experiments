@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { Router } from '@reach/router';
 
-import CaptionsWithEmotion from 'pages/CaptionsWithEmotion';
 import CaptionsWithMood from 'pages/CaptionsWithMood';
+import CaptionsWithMoodChart from 'pages/CaptionsWithMoodChart';
 import Home from 'pages/Home';
 import LiveCaptions from 'pages/LiveCaptions';
 
@@ -12,7 +12,7 @@ const App: FC = () => {
       <Home path="/" />
       <LiveCaptions path="live-captions" />
       <CaptionsWithMood path="captions-with-mood" />
-      <CaptionsWithEmotion path="captions-with-emotion" />
+      <CaptionsWithMoodChart path="captions-with-mood-chart" />
     </Router>
   );
 };

@@ -6,7 +6,7 @@ import SpeechRecognition, {
 
 interface Props extends RouteComponentProps {}
 
-const Home: FC<Props> = () => {
+const LiveCaptions: FC<Props> = () => {
   const { finalTranscript, resetTranscript } = useSpeechRecognition();
   const [fullTranscript, setFullTranscript] = useState<string[]>([]);
 
@@ -50,4 +50,4 @@ const Home: FC<Props> = () => {
   );
 };
 
-export default Home;
+export default LiveCaptions;

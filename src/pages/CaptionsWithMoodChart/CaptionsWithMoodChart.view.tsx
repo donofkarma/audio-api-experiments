@@ -3,20 +3,52 @@ import { RouteComponentProps } from '@reach/router';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
+import { VictoryChart, VictoryLine, VictoryTheme } from 'victory';
 
 import fetchTone from 'utils/fetchTone';
 
-import { Tones } from './CaptionsWihMood.types';
+import { Tones } from './CaptionsWithMoodChart.types';
 
 interface Props extends RouteComponentProps {}
 type FullTranscript = Array<{
   text: string;
   tones: Array<Tones>;
 }>;
+type ChartData = Array<{
+  x: number,
+  y: number,
+}>;
 
-const CaptionsWithMood: FC<Props> = () => {
+const MOODS: {
+  [key: string]: number;
+} = {
+  joy: 8,
+  confident: 7,
+  analytical: 6,
+  neutral: 5,
+  tentative: 4,
+  fear: 3,
+  sadness: 2,
+  anger: 1,
+} as const;
+
+const CaptionsWithMoodChart: FC<Props> = () => {
   const { finalTranscript, resetTranscript } = useSpeechRecognition();
+  const [chartData, setChartData] = useState<ChartData>([]);
   const [fullTranscript, setFullTranscript] = useState<FullTranscript>([]);
+
+  const getChartData = useCallback(() => {
+    const newChartData = fullTranscript.map(({ tones }, index) => {
+      const { tone_id } = tones?.[0] || {};
+
+      return {
+        x: index + 1,
+        y: MOODS[tone_id || 'neutral'],
+      }
+    });
+
+    setChartData(newChartData);
+  }, [fullTranscript]);
 
   const getTones = useCallback(
     async (text: string) => {
@@ -49,6 +81,10 @@ const CaptionsWithMood: FC<Props> = () => {
     }
   }, [finalTranscript, getTones]);
 
+  useEffect(() => {
+    getChartData();
+  }, [getChartData, fullTranscript]);
+
   return (
     <>
       <h1>Live captions with mood</h1>
@@ -68,6 +104,19 @@ const CaptionsWithMood: FC<Props> = () => {
       <button onClick={() => SpeechRecognition.stopListening()} type="button">
         Stop
       </button>
+
+      <div style={{ height: '400px' }}>
+        <VictoryChart theme={VictoryTheme.material}>
+          <VictoryLine
+            data={chartData}
+            domain={{ y: [0, 9] }}
+            style={{
+              data: { stroke: "#c43a31" },
+              parent: { border: "1px solid #ccc"}
+            }}
+          />
+        </VictoryChart>
+      </div>
 
       <div>
         {fullTranscript.map(({ text, tones }, index: number) => (
@@ -90,4 +139,4 @@ const CaptionsWithMood: FC<Props> = () => {
   );
 };
 
-export default CaptionsWithMood;
+export default CaptionsWithMoodChart;

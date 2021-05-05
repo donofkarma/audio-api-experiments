@@ -13,7 +13,10 @@ const Home: FC<Props> = () => {
           <Link to="/live-captions">Live captions</Link>
         </li>
         <li>
-          <Link to="/captions-with-mood">Caption with mood</Link>
+          <Link to="/captions-with-mood">Captions with mood</Link>
+        </li>
+        <li>
+          <Link to="/captions-with-mood-chart">Captions with mood chart</Link>
         </li>
       </ul>
     </>
